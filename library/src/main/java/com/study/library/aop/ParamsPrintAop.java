@@ -12,20 +12,19 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class ParamsPrintAop {
-
     @Pointcut("@annotation(com.study.library.aop.annotation.ParamsPrintAspect)")
     private void pointCut() {}
 
     @Around("pointCut()")
-    public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable{
+    public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         CodeSignature codeSignature = (CodeSignature) proceedingJoinPoint.getSignature();
         String className = codeSignature.getDeclaringTypeName();
         String methodName = codeSignature.getName();
-        String[] argName = codeSignature.getParameterNames();
+        String[] argNames = codeSignature.getParameterNames();
         Object[] args = proceedingJoinPoint.getArgs();
 
-        for (int i=0; i < argName.length; i++) {
-            log.info("{}: {} ({}.{})", argName[i], args[i], className, methodName);
+        for(int i = 0; i < argNames.length; i++) {
+            log.info("{}: {} ({}.{})", argNames[i], args[i], className, methodName);
         }
 
         return proceedingJoinPoint.proceed();

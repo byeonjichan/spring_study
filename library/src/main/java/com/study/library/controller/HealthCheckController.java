@@ -14,7 +14,8 @@ public class HealthCheckController {
     private String serverName;
 
     @GetMapping("/server/health")
-    public ResponseEntity<?> check () {
+    public ResponseEntity<?> check() {
         return ResponseEntity.ok(Map.of("serverName", serverName));
     }
+
 }
