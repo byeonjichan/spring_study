@@ -56,6 +56,7 @@ public class ValidAop {
                 String fieldName = fieldError.getField();
                 String message = fieldError.getDefaultMessage();
                 errorMap.put(fieldName, message);
+
             }
             throw new ValidException(errorMap);
         }
