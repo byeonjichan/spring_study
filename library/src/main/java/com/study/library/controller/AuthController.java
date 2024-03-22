@@ -1,7 +1,7 @@
 package com.study.library.controller;
 
 import com.study.library.aop.annotation.ValidAspect;
-import com.study.library.dto.OAuth2MergeREqDto;
+import com.study.library.dto.OAuth2MergeReqDto;
 import com.study.library.dto.OAuth2SignupReqDto;
 import com.study.library.dto.SigninReqDto;
 import com.study.library.dto.SignupReqDto;
@@ -44,8 +44,9 @@ public class AuthController {
     public ResponseEntity<?> oAuth2Merge() {
         return ResponseEntity.ok(null);
     }
+
     @PostMapping("oauth2/merge")
-    public ResponseEntity<?> oAuth2Merge(@RequestBody OAuth2MergeREqDto oAuth2MergeREqDto) {
+    public ResponseEntity<?> oAuth2Merge(@RequestBody OAuth2MergeReqDto oAuth2MergeREqDto) {
         authService.oAuth2Merge(oAuth2MergeREqDto);
         return ResponseEntity.ok(true);
     }

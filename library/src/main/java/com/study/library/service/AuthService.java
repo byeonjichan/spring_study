@@ -1,6 +1,6 @@
 package com.study.library.service;
 
-import com.study.library.dto.OAuth2MergeREqDto;
+import com.study.library.dto.OAuth2MergeReqDto;
 import com.study.library.dto.OAuth2SignupReqDto;
 import com.study.library.dto.SigninReqDto;
 import com.study.library.dto.SignupReqDto;
@@ -11,8 +11,6 @@ import com.study.library.jwt.JwtProvider;
 import com.study.library.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +26,6 @@ public class AuthService {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private JwtProvider jwtProvider;
-    @Autowired
-    private OAuth2MergeREqDto oAuth2MergeREqDto;
 
     public boolean isDuplicatedByUsername(String username) {
         return userMapper.findUserByUsername(username) != null;
@@ -69,13 +65,19 @@ public class AuthService {
      //   Authentication authentication = new UsernamePasswordAuthenticationToken(user.toPrincipalUser() , "");
         return jwtProvider.generateToken(user);
     }
-    public void  oAuth2Merge(OAuth2MergeREqDto oAuth2MergeREqDto) {
-        User user = userMapper.findUserByOAuth2Username(oAuth2MergeREqDto.getUsername());
+    public void  oAuth2Merge(OAuth2MergeReqDto oAuth2MergeReqDto) {
+        User user = userMapper.findUserByUsername(oAuth2MergeReqDto.getUsername());
         if (user == null) {
             throw new UsernameNotFoundException("사용자 정보를 확인하세요.");
 
-        } else if (!passwordEncoder.matches(oAuth2MergeREqDto.getPassword(), user.getPassword())) {
+        } else if (!passwordEncoder.matches(oAuth2MergeReqDto.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("사용자 정보를 확인하세요.");
         }
+        OAuth2 oAuth2 = OAuth2.builder()
+                .oAuth2Name(oAuth2MergeReqDto.getOauth2Name())
+                .providerName(oAuth2MergeReqDto.getProviderName())
+                .userId(user.getUserId())
+                .build();
+        userMapper.saveOAuth2(oAuth2);
     }
 }
