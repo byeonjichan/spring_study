@@ -16,18 +16,24 @@ public class PermitAllFilter extends GenericFilter {
         HttpServletRequest request =  (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        List<String> antMatchers = List.of("/error","/server","/auth", "/mail/authenticate");
+        List<String> antMatchers = List.of(
+                "/login",
+                "/error",
+                "/server",
+                "/auth",
+                "/mail/authenticate",
+                "/oauth2"
+        );
 
         String uri = request.getRequestURI();
         request.setAttribute("isPermitAll", false);
-
+        System.out.println(uri);
         for (String antMatcher : antMatchers) {
             if (uri.contains(antMatcher)) {
                 request.setAttribute("isPermitAll", true);
             }
         }
 
-        System.out.println(uri);
         filterChain.doFilter(request , response);
     }
 }

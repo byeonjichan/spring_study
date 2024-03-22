@@ -1,7 +1,10 @@
 package com.study.library.service;
 
+import com.study.library.dto.OAuth2MergeREqDto;
+import com.study.library.dto.OAuth2SignupReqDto;
 import com.study.library.dto.SigninReqDto;
 import com.study.library.dto.SignupReqDto;
+import com.study.library.entity.OAuth2;
 import com.study.library.entity.User;
 import com.study.library.exception.SaveException;
 import com.study.library.jwt.JwtProvider;
@@ -25,6 +28,8 @@ public class AuthService {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private JwtProvider jwtProvider;
+    @Autowired
+    private OAuth2MergeREqDto oAuth2MergeREqDto;
 
     public boolean isDuplicatedByUsername(String username) {
         return userMapper.findUserByUsername(username) != null;
@@ -36,7 +41,20 @@ public class AuthService {
         User user = signupReqDto.toEntity(passwordEncoder);
         successCount += userMapper.saveUser(user);
         successCount += userMapper.saveRole(user.getUserId(), 1);
+
+
         if(successCount < 2) {
+            throw new SaveException();
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void oAuth2Signup(OAuth2SignupReqDto oAuth2SignupReqDto) {
+        int successCount = 0;
+        User user = oAuth2SignupReqDto.toEntity(passwordEncoder);
+        successCount += userMapper.saveUser(user);
+        successCount += userMapper.saveRole(user.getUserId(), 1);
+        successCount += userMapper.saveOAuth2(oAuth2SignupReqDto.toOAuth2Entity(user.getUserId()));
+        if(successCount < 3) {
             throw new SaveException();
         }
     }
@@ -50,5 +68,14 @@ public class AuthService {
         }
      //   Authentication authentication = new UsernamePasswordAuthenticationToken(user.toPrincipalUser() , "");
         return jwtProvider.generateToken(user);
+    }
+    public void  oAuth2Merge(OAuth2MergeREqDto oAuth2MergeREqDto) {
+        User user = userMapper.findUserByOAuth2Username(oAuth2MergeREqDto.getUsername());
+        if (user == null) {
+            throw new UsernameNotFoundException("사용자 정보를 확인하세요.");
+
+        } else if (!passwordEncoder.matches(oAuth2MergeREqDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("사용자 정보를 확인하세요.");
+        }
     }
 }
