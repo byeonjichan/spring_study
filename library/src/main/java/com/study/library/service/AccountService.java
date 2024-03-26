@@ -4,7 +4,6 @@ import com.study.library.dto.EditPasswordReqDto;
 import com.study.library.entity.User;
 import com.study.library.exception.ValidException;
 import com.study.library.repository.UserMapper;
-import com.study.library.security.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
