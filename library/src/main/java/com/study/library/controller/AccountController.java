@@ -20,21 +20,20 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("principal")
+    @GetMapping("/principal")
     public ResponseEntity<?> getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-
         return ResponseEntity.ok(principalUser);
     }
 
     @ValidAspect
     @PutMapping("/password")
     public ResponseEntity<?> editPassword(
-           @Valid @RequestBody EditPasswordReqDto editPasswordReqDto,
+            @Valid @RequestBody EditPasswordReqDto editPasswordReqDto,
             BindingResult bindingResult) {
-        accountService.editPassword(editPasswordReqDto);
 
+        accountService.editPassword(editPasswordReqDto);
         return ResponseEntity.ok(true);
     }
 }

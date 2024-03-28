@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 public class OptionsService {
+
     @Autowired
     private OptionsMapper optionsMapper;
 
@@ -21,3 +22,14 @@ public class OptionsService {
         return optionsMapper.getAllCategories();
     }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -5,19 +5,20 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
 public class RegisterBookReqDto {
     private String isbn;
-    @Min (value = 1, message = "숫자만 입력 가능합니다.")
+    @Min(value = 1, message = "숫자만 입력 가능합니다.")
     private int bookTypeId;
-    @Min (value = 1, message = "숫자만 입력 가능합니다.")
+    @Min(value = 1, message = "숫자만 입력 가능합니다.")
     private int categoryId;
-    @NotBlank(message = "도서명은 빈 값일 수 없습니다.") // 공백, 띄어쓰기, null
-    //@NotBlank  // null 체크
-    //@Null // null 체크
-    //@Empty // 공백만 체크 Null(x)
+    @NotBlank(message = "도서명은 빈 값일 수 없습니다.")    // 공백, null, 띄어쓰기
+    // @NotNull // Null 체크
+    // @Null // Null 체크
+    // @Empty // 공백만 체크 Null(x)
     private String bookName;
     @NotBlank(message = "저자명은 빈 값일 수 없습니다.")
     private String authorName;
@@ -38,3 +39,12 @@ public class RegisterBookReqDto {
                 .build();
     }
 }
+
+
+
+
+
+
+
+
+

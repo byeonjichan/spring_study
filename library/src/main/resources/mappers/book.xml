@@ -33,18 +33,18 @@
 
     <insert id="saveBook" parameterType="com.study.library.entity.Book">
         insert into book_tb
-            values(
-                0,
-                #{bookName},
-                #{authorName},
-                #{publisherName},
-                #{isbn},
-                #{bookTypeId},
-                #{categoryId},
-                #{coverImgUrl},
-                now(),
-                now()
-                )
+        values(
+            0,
+            #{bookName},
+            #{authorName},
+            #{publisherName},
+            #{isbn},
+            #{bookTypeId},
+            #{categoryId},
+            #{coverImgUrl},
+            now(),
+            now()
+        )
     </insert>
 
     <select id="findBooks" resultMap="BookResultMap">
@@ -67,36 +67,37 @@
             left outer join category_tb ct on(ct.category_id = bt.category_id)
         where
             1 = 1
-        <if test="bookTypeId != 0">
-            and bt.book_type_id = #{bookTypeId}
-        </if>
-        <if test="categoryId != 0">
-            and bt.category_id = #{categoryId}
-        </if>
-        <choose>
-            <when test="searchTypeId == 0">
-                and (
-                    bt.book_name like concat('%', #{searchText}, '%')
-                    or bt.author_name like concat('%', #{searchText}, '%')
-                    or bt.publisher_name like concat('%', #{searchText}, '%')
-                    or bt.isbn like concat('%', #{searchText}, '%')
+            <if test="bookTypeId != 0">
+                and bt.book_type_id = #{bookTypeId}
+            </if>
+            <if test="categoryId != 0">
+                and bt.category_id = #{categoryId}
+            </if>
+            <choose>
+                <when test="searchTypeId == 0">
+                    and (
+                        bt.book_name like concat('%', #{searchText}, '%')
+                        or bt.author_name like concat('%', #{searchText}, '%')
+                        or bt.publisher_name like concat('%', #{searchText}, '%')
+                        or bt.isbn like concat('%', #{searchText}, '%')
                     )
-            </when>
-            <when test="searchTypeId == 1">
-                and bt.book_name like concat('%', #{searchText}, '%')
-            </when>
-            <when test="searchTypeId == 2">
-                and bt.author_name like concat('%', #{searchText}, '%')
-            </when>
-            <when test="searchTypeId == 3">
-                and bt.publisher_name like concat('%', #{searchText}, '%')
-            </when>
-            <when test="searchTypeId == 4">
-                and bt.isbn like concat('%', #{searchText}, '%')
-            </when>
-        </choose>
-            limit #{startIndex}, #{count}
+                </when>
+                <when test="searchTypeId == 1">
+                    and bt.book_name like concat('%', #{searchText}, '%')
+                </when>
+                <when test="searchTypeId == 2">
+                    and bt.author_name like concat('%', #{searchText}, '%')
+                </when>
+                <when test="searchTypeId == 3">
+                    and bt.publisher_name like concat('%', #{searchText}, '%')
+                </when>
+                <when test="searchTypeId == 4">
+                    and bt.isbn like concat('%', #{searchText}, '%')
+                </when>
+            </choose>
+        limit #{startIndex}, #{count}
     </select>
+
     <select id="getBookCount" resultType="integer">
         select
             count(*)
@@ -135,4 +136,39 @@
                 </when>
             </choose>
     </select>
+
+    <delete id="deleteBooksByBookIds" parameterType="list">
+        delete
+        from
+            book_tb
+        where
+            book_id in
+            <foreach collection="bookIds" item="bookId" open="(" close=")" separator=",">
+                #{bookId}
+            </foreach>
+    </delete>
+
+    <update id="updateBookByBookId" parameterType="com.study.library.entity.Book">
+        update
+            book_tb
+        set
+            book_name = #{bookName},
+            author_name = #{authorName},
+            publisher_name = #{publisherName},
+            isbn = #{isbn},
+            book_type_id = #{bookTypeId},
+            category_id = #{categoryId},
+            cover_img_url = #{coverImgUrl},
+            update_date = now()
+        where
+            book_id = #{bookId}
+    </update>
 </mapper>
+
+
+
+
+
+
+
+

@@ -8,5 +8,4 @@ import lombok.Data;
 public class SearchBookCountRespDto {
     private int totalCount;
     private int maxPageNumber;
-
 }

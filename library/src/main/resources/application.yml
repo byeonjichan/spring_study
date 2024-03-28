@@ -19,6 +19,7 @@ spring:
           kakao:
             redirectUri: http://localhost:8080/login/oauth2/code/kakao
 
+
 server:
   port: 8080
   deploy-address: localhost
@@ -57,8 +58,6 @@ spring:
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
             userNameAttribute: id
-
-
 client:
   deploy-address: "localhost:3000"
 

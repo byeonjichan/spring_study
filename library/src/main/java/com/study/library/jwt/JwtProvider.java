@@ -21,7 +21,6 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 
-
 @Slf4j
 @Component
 public class JwtProvider {
@@ -31,13 +30,12 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${jwt.secret}") String secret,
-            @Autowired UserMapper UserMapper) {
+            @Autowired UserMapper userMapper) {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-        this.userMapper = UserMapper;
+        this.userMapper = userMapper;
     }
 
-    public String generateToken(User user){
-
+    public String generateToken(User user) {
         int userId = user.getUserId();
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
@@ -45,17 +43,17 @@ public class JwtProvider {
 
         String accessToken = Jwts.builder()
                 .claim("userId", userId)
-                .claim("username" , username)
-                .claim("authorities" , authorities)
+                .claim("username", username)
+                .claim("authorities", authorities)
                 .setExpiration(expireDate)
-                .signWith(key , SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return accessToken;
     }
 
     public String removeBearer(String token) {
-        if (!StringUtils.hasText(token)) {
+        if(!StringUtils.hasText(token)) {
             return null;
         }
         return token.substring("Bearer ".length());
@@ -76,20 +74,21 @@ public class JwtProvider {
     public Authentication getAuthentication(Claims claims) {
         String username = claims.get("username").toString();
         User user = userMapper.findUserByUsername(username);
-        if (user == null) {
-            //토큰은 유효하지만 DB 에서 USER 정보가 삭제되었을 경우
+        if(user == null) {
+            // 토큰은 유효하지만 DB에서 USER정보가 삭제되었을 경우
             return null;
         }
         PrincipalUser principalUser = user.toPrincipalUser();
         return new UsernamePasswordAuthenticationToken(principalUser, principalUser.getPassword(), principalUser.getAuthorities());
     }
+
     public String generateAuthMailToken(int userId, String toMailAddress) {
-        Date expireDate =new Date(new Date().getTime() + (1000 * 60 * 5));
+        Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 5));
         return Jwts.builder()
                 .claim("userId", userId)
-                .claim("toMailAddress" , toMailAddress)
+                .claim("toMailAddress", toMailAddress)
                 .setExpiration(expireDate)
-                .signWith(key , SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 }

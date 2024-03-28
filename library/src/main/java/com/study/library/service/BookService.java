@@ -1,9 +1,6 @@
 package com.study.library.service;
 
-import com.study.library.dto.RegisterBookReqDto;
-import com.study.library.dto.SearchBookCountRespDto;
-import com.study.library.dto.SearchBookReqDto;
-import com.study.library.dto.SearchBookRespDto;
+import com.study.library.dto.*;
 import com.study.library.entity.Book;
 import com.study.library.repository.BookMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
+
     @Autowired
     private BookMapper bookMapper;
 
@@ -22,8 +20,9 @@ public class BookService {
     public void saveBook(RegisterBookReqDto registerBookReqDto) {
         bookMapper.saveBook(registerBookReqDto.toEntity());
     }
+
     public List<SearchBookRespDto> searchBooks(SearchBookReqDto searchBookReqDto) {
-        int startIndex = (searchBookReqDto.getPage()- 1) * searchBookReqDto.getCount();
+        int startIndex = (searchBookReqDto.getPage() - 1) * searchBookReqDto.getCount();
 
         List<Book> books = bookMapper.findBooks(
                 startIndex,
@@ -33,8 +32,10 @@ public class BookService {
                 searchBookReqDto.getSearchTypeId(),
                 searchBookReqDto.getSearchText()
         );
-        return  books.stream().map(Book::tosearchBookRespDto).collect(Collectors.toList());
+
+        return books.stream().map(Book::toSearchBookRespDto).collect(Collectors.toList());
     }
+
     public SearchBookCountRespDto getBookCount(SearchBookReqDto searchBookReqDto) {
         int bookCount = bookMapper.getBookCount(
                 searchBookReqDto.getBookTypeId(),
@@ -42,11 +43,30 @@ public class BookService {
                 searchBookReqDto.getSearchTypeId(),
                 searchBookReqDto.getSearchText()
         );
-        int maxPageNumber =(int) Math.ceil((double) bookCount / searchBookReqDto.getCount());
+        int maxPageNumber = (int) Math.ceil(((double) bookCount) / searchBookReqDto.getCount());
 
-        return  SearchBookCountRespDto.builder()
+        return SearchBookCountRespDto.builder()
                 .totalCount(bookCount)
                 .maxPageNumber(maxPageNumber)
                 .build();
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBooks(List<Integer> bookIds) {
+        bookMapper.deleteBooksByBookIds(bookIds);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateBooks(UpdateBookReqDto updateBookReqDto) {
+        bookMapper.updateBookByBookId(updateBookReqDto.toEntity());
+    }
 }
+
+
+
+
+
+
+
+
+
+

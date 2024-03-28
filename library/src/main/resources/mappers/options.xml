@@ -5,13 +5,13 @@
 
 <mapper namespace="com.study.library.repository.OptionsMapper">
     <resultMap id="BookTypeResultMap" type="com.study.library.entity.BookType">
-        <id property="bookTypeId" column="book_type_id" />
-        <result property="bookTypeName" column="book_type_name" />
-        <result property="createDate" column="create_date" />
-        <result property="updateDate" column="update_date" />
+        <id property="bookTypeId" column="book_type_id"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
     </resultMap>
     <resultMap id="CategoryResultMap" type="com.study.library.entity.Category">
-        <id property="categoryId" column="category_id" />
+        <id property="categoryId" column="category_id"/>
         <result property="categoryName" column="category_name"/>
         <result property="createDate" column="create_date"/>
         <result property="updateDate" column="update_date"/>
@@ -26,6 +26,7 @@
         from
             book_type_tb
     </select>
+
     <select id="getAllCategories" resultMap="CategoryResultMap">
         select
             category_id,
@@ -36,3 +37,11 @@
             category_tb
     </select>
 </mapper>
+
+
+
+
+
+
+
+

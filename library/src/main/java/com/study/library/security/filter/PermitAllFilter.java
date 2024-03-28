@@ -13,7 +13,7 @@ public class PermitAllFilter extends GenericFilter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request =  (HttpServletRequest) servletRequest;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         List<String> antMatchers = List.of(
@@ -21,19 +21,19 @@ public class PermitAllFilter extends GenericFilter {
                 "/error",
                 "/server",
                 "/auth",
-                "/mail/authenticate",
-                "/oauth2"
+                "/oauth2",
+                "/mail/authenticate"
         );
 
         String uri = request.getRequestURI();
         request.setAttribute("isPermitAll", false);
-        System.out.println(uri);
-        for (String antMatcher : antMatchers) {
-            if (uri.contains(antMatcher)) {
+
+        for(String antMatcher : antMatchers) {
+            if(uri.startsWith(antMatcher)) {
                 request.setAttribute("isPermitAll", true);
             }
         }
 
-        filterChain.doFilter(request , response);
+        filterChain.doFilter(request, response);
     }
 }

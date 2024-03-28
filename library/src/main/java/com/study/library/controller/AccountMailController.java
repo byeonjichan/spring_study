@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/mail")
@@ -16,19 +17,16 @@ public class AccountMailController {
     @Autowired
     private AccountMailService accountMailService;
 
-    @ResponseBody
     @PostMapping("/send")
+    @ResponseBody
     public ResponseEntity<?> send() {
-
         return ResponseEntity.ok(accountMailService.sendAuthMail());
     }
+
     @GetMapping("/authenticate")
     public String resultPage(Model model, @RequestParam String authToken) {
-        System.out.println(authToken);
         Map<String, Object> resultMap = accountMailService.authenticate(authToken);
         model.addAllAttributes(resultMap);
         return "result_page";
-
     }
-
 }

@@ -17,7 +17,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(ValidException.class)
-    public ResponseEntity<?> ValidException(ValidException e) {
+    public ResponseEntity<?> validException(ValidException e) {
         return ResponseEntity.badRequest().body(e.getErrorMap());
     }
 
@@ -27,7 +27,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> BadCredentialsException(BadCredentialsException e) {
+    public ResponseEntity<?> badCredentialsException(BadCredentialsException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class RoleRegister {
-
     private int roleRegisterId;
     private int userId;
     private int roleId;

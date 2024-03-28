@@ -11,6 +11,8 @@ import com.study.library.jwt.JwtProvider;
 import com.study.library.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
-
 
     @Autowired
     private UserMapper userMapper;
@@ -35,14 +36,15 @@ public class AuthService {
     public void signup(SignupReqDto signupReqDto) {
         int successCount = 0;
         User user = signupReqDto.toEntity(passwordEncoder);
+
         successCount += userMapper.saveUser(user);
         successCount += userMapper.saveRole(user.getUserId(), 1);
-
 
         if(successCount < 2) {
             throw new SaveException();
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     public void oAuth2Signup(OAuth2SignupReqDto oAuth2SignupReqDto) {
         int successCount = 0;
@@ -50,34 +52,42 @@ public class AuthService {
         successCount += userMapper.saveUser(user);
         successCount += userMapper.saveRole(user.getUserId(), 1);
         successCount += userMapper.saveOAuth2(oAuth2SignupReqDto.toOAuth2Entity(user.getUserId()));
+
         if(successCount < 3) {
             throw new SaveException();
         }
     }
+
     public String signin(SigninReqDto signinReqDto) {
         User user = userMapper.findUserByUsername(signinReqDto.getUsername());
-        if (user == null) {
-            throw new UsernameNotFoundException("사용자 정보를 확인하세요.");
-
-        } else if (!passwordEncoder.matches(signinReqDto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("사용자 정보를 확인하세요.");
+        if(user == null) {
+            throw new UsernameNotFoundException("사용자 정보를 확인하세요");
         }
-     //   Authentication authentication = new UsernamePasswordAuthenticationToken(user.toPrincipalUser() , "");
+        if(!passwordEncoder.matches(signinReqDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("사용자 정보를 확인하세요");
+        }
+
         return jwtProvider.generateToken(user);
     }
-    public void  oAuth2Merge(OAuth2MergeReqDto oAuth2MergeReqDto) {
-        User user = userMapper.findUserByUsername(oAuth2MergeReqDto.getUsername());
-        if (user == null) {
-            throw new UsernameNotFoundException("사용자 정보를 확인하세요.");
 
-        } else if (!passwordEncoder.matches(oAuth2MergeReqDto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("사용자 정보를 확인하세요.");
+    public void oAuth2Merge(OAuth2MergeReqDto oAuth2MergeReqDto) {
+        User user = userMapper.findUserByUsername(oAuth2MergeReqDto.getUsername());
+
+        System.out.println(oAuth2MergeReqDto);
+
+        if(user == null) {
+            throw new UsernameNotFoundException("사용자 정보를 확인하세요");
+        }
+        if(!passwordEncoder.matches(oAuth2MergeReqDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("사용자 정보를 확인하세요");
         }
         OAuth2 oAuth2 = OAuth2.builder()
                 .oAuth2Name(oAuth2MergeReqDto.getOauth2Name())
-                .providerName(oAuth2MergeReqDto.getProviderName())
                 .userId(user.getUserId())
+                .providerName(oAuth2MergeReqDto.getProviderName())
                 .build();
+
         userMapper.saveOAuth2(oAuth2);
     }
+
 }

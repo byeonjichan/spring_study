@@ -16,26 +16,28 @@ public class OAuth2PrincipalUserService implements OAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2UserService <OAuth2UserRequest , OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-        Map<String , Object> attributes = oAuth2User.getAttributes();
-        String provider = userRequest.getClientRegistration().getClientName(); // 구글, 카카오 , 네이버
-        Map<String, Object> newAttributes = null;
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+
         System.out.println(attributes);
+
+        String provider = userRequest.getClientRegistration().getClientName(); // Google, Kakao, Naver
+        Map<String, Object> newAttributes = null;
         String id = null;
         switch (provider) {
             case "Google":
                 id = attributes.get("sub").toString();
                 break;
             case "Naver":
-                Map<String , Object> response =(Map<String, Object>) attributes.get("response");
+                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
                 id = response.get("id").toString();
                 break;
             case "Kakao":
                 id = attributes.get("id").toString();
                 break;
         }
-        newAttributes = Map.of("id" , id , "provider" , provider);
+        newAttributes = Map.of("id", id, "provider", provider);
 
         return new DefaultOAuth2User(oAuth2User.getAuthorities(), newAttributes, "id");
     }

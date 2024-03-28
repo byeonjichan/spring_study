@@ -1,5 +1,6 @@
 package com.study.library.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -10,5 +11,4 @@ public class SearchBookReqDto {
     private int categoryId;
     private int searchTypeId;
     private String searchText;
-
 }

@@ -14,10 +14,11 @@ public class BookRegisterOptionController {
     @Autowired
     private OptionsService optionsService;
 
-    @GetMapping("/type")
-    public ResponseEntity<?> getType() {
+    @GetMapping("/types")
+    public ResponseEntity<?> getBookTypes() {
         return ResponseEntity.ok(optionsService.getAllBookTypes());
     }
+
     @GetMapping("/categories")
     public ResponseEntity<?> getCategories() {
         return ResponseEntity.ok(optionsService.getAllCategories());

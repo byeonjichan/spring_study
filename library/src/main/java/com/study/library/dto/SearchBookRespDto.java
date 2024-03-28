@@ -3,8 +3,8 @@ package com.study.library.dto;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Builder
+@Data
 public class SearchBookRespDto {
     private int bookId;
     private String bookName;

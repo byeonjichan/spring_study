@@ -27,7 +27,7 @@ public class Book {
     private BookType bookType;
     private Category category;
 
-    public SearchBookRespDto tosearchBookRespDto() {
+    public SearchBookRespDto toSearchBookRespDto() {
         return SearchBookRespDto.builder()
                 .bookId(bookId)
                 .bookName(bookName)
@@ -42,3 +42,14 @@ public class Book {
                 .build();
     }
 }
+
+
+
+
+
+
+
+
+
+
+

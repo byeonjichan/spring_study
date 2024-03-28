@@ -1,6 +1,6 @@
 package com.study.library.config;
 
-import com.study.library.security.AuthEntryPoint;
+import com.study.library.security.exception.AuthEntryPoint;
 import com.study.library.security.filter.JwtAuthenticationFilter;
 import com.study.library.security.filter.PermitAllFilter;
 import com.study.library.security.handler.OAuth2SuccessHandler;
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private PermitAllFilter permitAllFilter;
     @Autowired
@@ -36,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors(); // WebMvcConfig 의 cors 세팅을 받아옴
+        http.cors();
         http.csrf().disable();
         http.authorizeRequests()
                 .antMatchers("/server/**", "/auth/**")
@@ -48,17 +49,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilterBefore(permitAllFilter, LogoutFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter , UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(permitAllFilter, LogoutFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
                 .oauth2Login()
                 .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint()
-                //정보 구해서 userservice로 이동
+                // OAuth2로그인 토큰검사
                 .userService(oAuth2PrincipalUserService);
-
 
     }
 }
